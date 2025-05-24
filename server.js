@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 app.post('/proxy-to-medhub', async (req, res) => {
   try {
     console.log('Proxying request to MedHub:', req.body);
-    
+
     const response = await axios({
       method: 'post',
       url: 'https://northwell.medhub.com/functions/apps/codereadr/index.mh',
@@ -29,10 +29,10 @@ app.post('/proxy-to-medhub', async (req, res) => {
         'Accept': 'application/json, text/plain, */*'
       }
     });
-    
+
     console.log('MedHub response status:', response.status);
     console.log('MedHub response data:', response.data);
-    
+
     res.status(response.status).send(response.data);
   } catch (error) {
     console.error('Error forwarding to MedHub:', error.message);
@@ -45,6 +45,7 @@ app.post('/proxy-to-medhub', async (req, res) => {
 });
 
 // Listen for requests
-const listener = app.listen(process.env.PORT, () => {
-  console.log('Your app is listening on port ' + listener.address().port);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Your app is listening on port ${PORT}`);
 });

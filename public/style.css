@@ -1,0 +1,260 @@
+    <style>
+        :root {
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --color-primary: #0066cc;
+            --color-success: #006600;
+            --color-error: #cc0000;
+            --color-warning: #cc7000;
+            --color-text-light: #666;
+            --color-border: #ccc;
+            --color-border-light: #ddd;
+            --color-border-focus: #4d90fe;
+
+            --background-color-body: #f4f6f8; /* Light gray background for the page */
+            --background-color-container: #fff;
+            --background-color-input: #fff;
+            --background-color-input-focus-shadow: rgba(77,144,254,0.2);
+            --background-color-action-log: #f8f8f8;
+            --background-color-button: #f0f0f0;
+            --background-color-button-hover: #e0e0e0;
+            --background-color-button-active: #d0d0d0;
+            --background-color-lecture-button: #e6f2ff;
+            --background-color-lecture-button-hover: #cce6ff;
+            --background-color-lecture-button-active: #b3d9ff;
+            --background-color-status-setup: #f0f8ff;
+            --background-color-status-attendance: #f0fff0;
+            --background-color-success-flash-start: #90EE90;
+
+            --border-radius-small: 6px;
+            --border-radius-medium: 8px;
+            --border-radius-large: 12px;
+
+            --box-shadow-container: 0 4px 12px rgba(0,0,0,0.1);
+            --box-shadow-input-inset: inset 0 1px 3px rgba(0,0,0,0.1);
+
+            --padding-small: 10px;
+            --padding-medium: 12px;
+            --padding-large: 15px;
+            --padding-xlarge: 20px;
+            
+            --log-color-success: #2c7c26;
+            --log-color-error: #cc0000;
+            --log-color-info: #0066cc;
+            --log-color-warning: #cc7000;
+        }
+
+        /* Base styles */
+        body {
+            font-family: var(--font-family-base);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--padding-xlarge);
+            line-height: 1.4;
+            background-color: var(--background-color-body);
+        }
+        .container {
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-large);
+            padding: var(--padding-xlarge);
+            box-shadow: var(--box-shadow-container);
+            background-color: var(--background-color-container);
+        }
+        .status {
+            font-weight: bold;
+            padding: var(--padding-medium);
+            border-radius: var(--border-radius-small);
+            margin-bottom: var(--padding-large);
+            text-align: center;
+            font-size: 18px;
+        }
+        .setup-mode .status {
+            background-color: var(--background-color-status-setup);
+            color: var(--color-primary);
+        }
+        .attendance-mode .status {
+            background-color: var(--background-color-status-attendance);
+            color: var(--color-success);
+        }
+        .lecture-info {
+            margin-bottom: var(--padding-large);
+            font-weight: bold;
+            font-size: 16px;
+        }
+        input {
+            width: calc(100% - 24px); /* 2 * padding */
+            padding: var(--padding-medium);
+            margin: var(--padding-large) 0;
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-medium);
+            font-size: 16px;
+            box-shadow: var(--box-shadow-input-inset);
+            background-color: var(--background-color-input);
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--color-border-focus);
+            box-shadow: 0 0 0 2px var(--background-color-input-focus-shadow), var(--box-shadow-input-inset);
+        }
+        .action-log {
+            margin-top: var(--padding-large);
+            padding: var(--padding-medium);
+            background-color: var(--background-color-action-log);
+            border-radius: var(--border-radius-medium);
+            min-height: 60px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 14px;
+            border: 1px solid var(--color-border-light);
+            line-height: 1.5;
+        }
+        .action-log > div { /* Style for individual log entries */
+            padding: 4px 0;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+        .action-log > div:last-child {
+            border-bottom: none;
+        }
+        .scan-count {
+            margin-top: var(--padding-medium);
+            font-weight: bold;
+            font-size: 16px;
+        }
+        button {
+            background-color: var(--background-color-button);
+            border: 1px solid var(--color-border);
+            padding: var(--padding-medium) var(--padding-large);
+            border-radius: var(--border-radius-medium);
+            cursor: pointer;
+            margin-top: var(--padding-medium);
+            display: block;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        button:hover, button:focus {
+            background-color: var(--background-color-button-hover);
+            outline: none;
+        }
+        button:active {
+            background-color: var(--background-color-button-active);
+        }
+        button.lecture-btn {
+            background-color: var(--background-color-lecture-button);
+            border-color: var(--color-primary); 
+            color: var(--color-primary);
+            margin-bottom: var(--padding-small);
+        }
+        button.lecture-btn:hover, button.lecture-btn:focus {
+            background-color: var(--background-color-lecture-button-hover);
+        }
+        button.lecture-btn:active {
+            background-color: var(--background-color-lecture-button-active);
+        }
+        .hidden {
+            display: none;
+        }
+        .success-flash {
+            animation: flash-green 1s;
+        }
+        @keyframes flash-green {
+            0% { background-color: var(--background-color-success-flash-start); }
+            100% { background-color: var(--background-color-container); }
+        }
+        .lecture-buttons {
+            margin-bottom: var(--padding-large);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: var(--padding-small);
+        }
+        .lecture-section, .scan-section {
+            margin-top: var(--padding-xlarge);
+        }
+        .separator {
+            text-align: center;
+            margin: var(--padding-xlarge) 0;
+            font-size: 14px;
+            color: var(--color-text-light);
+        }
+        .separator:before, .separator:after {
+            content: "";
+            display: inline-block;
+            width: 40%;
+            border-top: 1px solid var(--color-border-light);
+            vertical-align: middle;
+            margin: 0 var(--padding-small);
+        }
+        
+        /* Log entry styling */
+        .log-success { color: var(--log-color-success); }
+        .log-error { color: var(--log-color-error); }
+        .log-info { color: var(--log-color-info); }
+        .log-warning { color: var(--log-color-warning); }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: var(--padding-large);
+            }
+            .container {
+                padding: var(--padding-large);
+                border-radius: var(--border-radius-medium); 
+            }
+            button {
+                padding: var(--padding-large);
+                margin-bottom: var(--padding-medium);
+            }
+            input {
+                padding: var(--padding-large);
+            }
+            .status {
+                padding: var(--padding-small); 
+                font-size: 17px;
+            }
+            .lecture-buttons {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: var(--padding-small);
+            }
+            .container {
+                padding: var(--padding-medium);
+                border-radius: var(--border-radius-medium);
+            }
+            .lecture-buttons {
+                grid-template-columns: 1fr;
+            }
+            .action-log {
+                max-height: 150px;
+                font-size: 13px;
+            }
+            .separator {
+                margin: var(--padding-large) 0;
+            }
+            .separator:before, .separator:after {
+                width: 30%;
+            }
+        }
+        
+        @media (hover: none) {
+            button, input { 
+                padding: 16px; 
+            }
+        }
+
+        input[readonly] {
+            background-color: var(--background-color-input); 
+        }
+        
+        @keyframes success-beep {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .success-beep {
+            animation: success-beep 0.3s ease-in-out;
+        }
+    </style>

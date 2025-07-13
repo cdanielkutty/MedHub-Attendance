@@ -1,41 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MedHub Attendance Tracker</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MedHub Attendance Tracker</title>
+
+<style>
+:root{
+  --font-family-base:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  --color-primary:#0066cc;
+  --color-success:#006600;
+  --color-warning:#cc7000;
+  --color-border:#ccc;
+  --color-border-light:#ddd;
+  --color-border-focus:#4d90fe;
+  --background-color-body:#f4f6f8;
+  --background-color-container:#fff;
+  --background-color-input:#fff;
+  --background-color-input-focus-shadow:rgba(77,144,254,.2);
+  --background-color-action-log:#f8f8f8;
+  --background-color-button:#f0f0f0;
+  --background-color-button-hover:#e0e0e0;
+  --background-color-lecture-button:#e6f2ff;
+  --background-color-lecture-button-hover:#cce6ff;
+  --background-color-status-setup:#f0f8ff;
+  --background-color-status-attendance:#f0fff0;
+  --background-color-success-flash-start:#90EE90;
+  --border-radius-small:6px;
+  --border-radius-medium:8px;
+  --border-radius-large:12px;
+  --box-shadow-container:0 4px 12px rgba(0,0,0,.1);
+  --box-shadow-input-inset:inset 0 1px 3px rgba(0,0,0,.1);
+  --padding-small:10px;--padding-medium:12px;--padding-large:15px;--padding-xlarge:20px;
+  --log-color-success:#2c7c26;--log-color-warning:#cc7000;--log-color-info:#0066cc;
+}
+body{font-family:var(--font-family-base);max-width:800px;margin:0 auto;
+     padding:var(--padding-xlarge);line-height:1.4;background:var(--background-color-body)}
+.container{border:1px solid var(--color-border);border-radius:var(--border-radius-large);
+           padding:var(--padding-xlarge);box-shadow:var(--box-shadow-container);
+           background:var(--background-color-container)}
+.status{font-weight:bold;padding:var(--padding-medium);border-radius:var(--border-radius-small);
+        margin-bottom:var(--padding-large);text-align:center;font-size:18px}
+.setup-mode .status{background:var(--background-color-status-setup);color:var(--color-primary)}
+.attendance-mode .status{background:var(--background-color-status-attendance);color:var(--color-success)}
+.lecture-info{margin-bottom:var(--padding-large);font-weight:bold}
+input{width:calc(100% - 24px);padding:var(--padding-medium);margin:var(--padding-large) 0;
+      border:1px solid var(--color-border);border-radius:var(--border-radius-medium);
+      font-size:16px;box-shadow:var(--box-shadow-input-inset);background:var(--background-color-input)}
+input:focus{outline:none;border-color:var(--color-border-focus);
+            box-shadow:0 0 0 2px var(--background-color-input-focus-shadow),
+                       var(--box-shadow-input-inset)}
+.action-log{margin-top:var(--padding-large);padding:var(--padding-medium);
+            background:var(--background-color-action-log);border-radius:var(--border-radius-medium);
+            min-height:60px;max-height:200px;overflow-y:auto;font-size:14px;
+            border:1px solid var(--color-border-light)}
+.action-log>div{padding:4px 0;border-bottom:1px solid var(--color-border-light)}
+.action-log>div:last-child{border-bottom:none}
+.scan-count{margin-top:var(--padding-medium);font-weight:bold}
+button{background:var(--background-color-button);border:1px solid var(--color-border);
+       padding:var(--padding-medium) var(--padding-large);border-radius:var(--border-radius-medium);
+       cursor:pointer;margin-top:var(--padding-medium);width:100%;font-size:16px;font-weight:500;
+       transition:background .2s}
+button:hover,button:focus{background:var(--background-color-button-hover);outline:none}
+button.lecture-btn{background:var(--background-color-lecture-button);border-color:var(--color-primary);
+                   color:var(--color-primary);margin-bottom:var(--padding-small)}
+button.lecture-btn:hover,button.lecture-btn:focus{
+       background:var(--background-color-lecture-button-hover)}
+.hidden{display:none}
+.success-flash{animation:flash-green 1s}
+@keyframes flash-green{0%{background:var(--background-color-success-flash-start)}
+ 100%{background:var(--background-color-container)}}
+.log-success{color:var(--log-color-success)}
+.log-warning{color:var(--log-color-warning)}
+.log-info{color:var(--log-color-info)}
+@media(max-width:768px){body{padding:var(--padding-large)}
+ .container{padding:var(--padding-large)}}
+@media(max-width:480px){body{padding:var(--padding-small)}
+ .container{padding:var(--padding-medium)}}
+</style>
 </head>
 <body>
-    <div class="container setup-mode" id="mainContainer">
-        <div class="status" id="statusDisplay" aria-live="polite">SELECT LECTURE TYPE</div>
-        
-        <div id="setupSection">
-            <div class="lecture-section">
-                <p>Select lecture type:</p>
-                <div class="lecture-buttons" id="lectureButtons">
-                    <!-- Lecture buttons will be inserted here -->
-                </div>
-            </div>
-            
-            <div class="separator">OR</div>
-            
-            <div class="scan-section">
-                <p>Scan lecture QR code:</p>
-                <input type="text" id="scanInput" placeholder="Scan QR code here" autocomplete="off">
-            </div>
-        </div>
-        
-        <div id="attendanceSection" class="hidden">
-            <div class="lecture-info" id="lectureInfo">Lecture: Not set</div>
-            <p>Ready for badge scans</p>
-            <div class="scan-count" id="scanCount">Total scans: 0</div>
-            <input type="text" id="badgeScanInput" placeholder="Scan badge here" autocomplete="off">
-            <button id="resetButton">RESET / NEW LECTURE</button>
-        </div>
-        
-        <div class="action-log" id="actionLog" aria-live="polite"></div>
+
+<div class="container setup-mode" id="mainContainer">
+  <div class="status" id="statusDisplay" aria-live="polite">SELECT LECTURE TYPE</div>
+
+  <div id="setupSection">
+    <div class="lecture-section">
+      <p>Select lecture type:</p>
+      <div class="lecture-buttons" id="lectureButtons"></div>
     </div>
-    <script src="app.js"></script>
+    <div class="separator" style="text-align:center;margin:20px 0;color:#666">OR</div>
+    <div class="scan-section">
+      <p>Scan lecture QR code:</p>
+      <input type="text" id="scanInput" placeholder="Scan QR code here" autocomplete="off">
+    </div>
+  </div>
+
+  <div id="attendanceSection" class="hidden">
+    <div class="lecture-info" id="lectureInfo">Lecture: Not set</div>
+    <p>Ready for badge scans</p>
+    <div class="scan-count" id="scanCount">Total scans: 0</div>
+    <input type="text" id="badgeScanInput" placeholder="Scan badge here" autocomplete="off">
+    <button id="resetButton">RESET / NEW LECTURE</button>
+  </div>
+
+  <div class="action-log" id="actionLog" aria-live="polite"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const CFG={
+    MEDHUB_PROXY_URL:'/proxy-to-medhub',
+    DEVICE_ID:'134',SID:'704',UDID:'301ad0e3bd',USER_ID:'codereadrTestUDID',
+    LECTURES:[
+      {n:'MKSAP',c:'MH-AUTO-curriculumID:13'},
+      {n:'Noon Conference',c:'MH-AUTO-curriculumID:5'},
+      {n:'Grand Rounds',c:'MH-AUTO-curriculumID:2'},
+      {n:'SIM LAB',c:'MH-AUTO-curriculumID:529'},
+      {n:'Academic Block',c:'MH-AUTO-curriculumID:392'},
+      {n:'Board Review',c:'MH-AUTO-curriculumID:7'},
+      {n:'Guidelines',c:'MH-AUTO-curriculumID:397'},
+      {n:'Journal Club',c:'MH-AUTO-curriculumID:3'},
+      {n:'Workshop',c:'MH-AUTO-curriculumID:9'},
+      {n:'Intern School',c:'MH-AUTO-curriculumID:12'}
+    ],
+    FOCUS_INTERVAL:500,BEEP_FLASH:1e3,QR_LEN:15
+  };
+  const el=q=>document.getElementById(q);
+  const cont=el('mainContainer'),status=el('statusDisplay'),
+        setupS=el('setupSection'),attS=el('attendanceSection'),
+        lectureInfo=el('lectureInfo'),scanIn=el('scanInput'),badgeIn=el('badgeScanInput'),
+        log=el('actionLog'),count=el('scanCount'),resetBtn=el('resetButton'),
+        btnWrap=el('lectureButtons');
+  let mode='setup',ids=new Set();
+  function msg(text,type='info'){
+    const t=new Date().toLocaleTimeString();
+    const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+    const div=document.createElement('div');
+    div.className=`log-${type}`;div.innerHTML=`${icons[type]||'📝'} ${t}: ${text}`;
+    log.prepend(div);
+  }
+  CFG.LECTURES.forEach(l=>{
+    const b=document.createElement('button');
+    b.className='lecture-btn';b.textContent=l.n;b.dataset.code=l.c;
+    b.onclick=()=>setupLecture(l.c,l.n);btnWrap.appendChild(b);
+  });
+  // keep input focused
+  setInterval(()=>{if(document.activeElement.tagName!=='INPUT')
+      (mode==='setup'?scanIn:badgeIn).focus();},CFG.FOCUS_INTERVAL);
+  scanIn.addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const v=scanIn.value.trim();if(!v)return;
+    const m=CFG.LECTURES.find(l=>l.c===v);const name=m?m.n:`QR: ${v.slice(0,CFG.QR_LEN)}${v.length>CFG.QR_LEN?'...':''}`;
+    setupLecture(v,name);scanIn.value='';
+  });
+  badgeIn.addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const v=badgeIn.value.trim();if(!v)return;
+    attendance(v);badgeIn.value='';setTimeout(()=>badgeIn.focus(),10);
+  });
+  resetBtn.onclick=()=>confirm('Reset and select a new lecture?')&&reset();
+  function setupLecture(code,name){
+    msg(`<strong>📚 LECTURE SETUP: ${name}</strong>`); // optimistic
+    send(code).then(()=>{switchMode(name);msg('Lecture setup successful','success');})
+        .catch(err=>{msg(`Lecture Setup Failed: ${err.message}`,'error');});
+  }
+  function attendance(bid){
+    if(ids.has(bid)){msg(`DUPLICATE: ID #${bid} already scanned.`,'warning');return;}
+    msg(`Processing badge ID #${bid}...`);
+    send(bid).then(()=>{
+      ids.add(bid);count.textContent=`Total scans: ${ids.size}`;
+      cont.classList.add('success-flash');setTimeout(()=>cont.classList.remove('success-flash'),CFG.BEEP_FLASH);
+      msg(`ID #${bid} successfully recorded.`,'success');
+    }).catch(err=>msg(`Badge Scan Error (ID #${bid}): ${err.message}`,'error'));
+  }
+  async function send(tid){
+    const body=new URLSearchParams({deviceid:CFG.DEVICE_ID,sid:CFG.SID,tid,udid:CFG.UDID,userid:CFG.USER_ID}).toString();
+    const r=await fetch(CFG.MEDHUB_PROXY_URL,{method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},body});
+    const txt=await r.text();
+    if(!r.ok||txt.includes('<status>0</status>'))throw new Error('MedHub returned error');
+    return txt;
+  }
+  function switchMode(name){
+    mode='attendance';cont.classList.replace('setup-mode','attendance-mode');
+    status.textContent='RECORDING ATTENDANCE';setupS.classList.add('hidden');attS.classList.remove('hidden');
+    lectureInfo.textContent=`Lecture: ${name}`;badgeIn.focus();
+  }
+  function reset(){
+    mode='setup';cont.classList.replace('attendance-mode','setup-mode');
+    status.textContent='SELECT LECTURE TYPE';setupS.classList.remove('hidden');attS.classList.add('hidden');
+    ids.clear();count.textContent='Total scans: 0';log.prepend(msg('System reset. Ready for new lecture setup.','info'));
+    scanIn.focus();
+  }
+  reset(); // initial
+});
+</script>
 </body>
 </html>
